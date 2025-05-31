@@ -1,6 +1,12 @@
 
+from datetime import date
 import requests
 from bs4 import BeautifulSoup
+
+# This list holds the price from the query
+prices = []
+# This list holds the date from the query
+data = []
 
 # URL to the product from which the price should be extracted
 url = "https://www.alternate.de/Intel/Core-Ultra-7-265K-Prozessor/html/product/100077064"
@@ -11,10 +17,21 @@ headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 response = requests.get(url, headers=headers)
 soup = BeautifulSoup(response.text, "html.parser")
 
+# Find the element where the price is stored
 price = soup.find("span", class_="price")
-price = price.text
 
-if price:
-    print(f"Price: {price}")
+# Check if we found the price
+if price is not None:
+    price = price.text
+    price = float(price[2:].replace(",", "."))
+    print(f"Price: {price:.2f}")
+    
+    # Get the query date
+    date = date.today().strftime("%d.%m.%Y")
+    print(date)
+    
+    # Add price and date to the lists
+    prices.append(price)
+    data.append(date)
 else:
     print("Price not found")
